@@ -1,0 +1,65 @@
+version: 1
+jobs:  
+  build:
+    docker:
+      - image: google/cloud-sdk
+    working_directory: ~/save-analytics-from-content-blockers
+    steps:
+      - checkout
+      - run:
+          name: install node js  and npm
+          command: | 
+            curl -sL https://deb.nodesource.com/setup_10.x | bash -
+            apt install nodejs && node -v && npm -v
+      - restore_cache:
+          name: Restore Yarn Package Cache
+          keys:
+            - yarn-packages-{{ checksum "yarn.lock" }}
+      - run: 
+          name: Install dependencies
+          command: npm install -g yarn && yarn install
+      - run: 
+          name: commit lint
+          command: yarn commitlint-circle
+      - run:
+          name:  release
+          command: |
+             OLDER_VERSION=$(node -p "require('./package.json').version")
+             echo "export OLDER_VERSION=$OLDER_VERSION" >> $BASH_ENV
+             npm run semantic-release || true
+      - save_cache:
+          name:
+          key: yarn-packages-{{ checksum "yarn.lock" }}
+          paths:
+            - ~/.cache/yarn
+      - run: 
+          name: build api server package
+          command: cd packages/api-server && yarn build          
+      - run: 
+          name: Setup Google Cloud SDK
+          command: |
+            echo $GCLOUD_SERVICE_KEY > ${HOME}/gcloud-service-key.json
+            gcloud auth activate-service-account --key-file=${HOME}/gcloud-service-key.json
+            gcloud --quiet config set project $GOOGLE_PROJECT_ID
+            gcloud --quiet config set compute/zone $GOOGLE_COMPUTE_ZONE
+      - setup_remote_docker 
+      - run: 
+          name: build dockerimage for api
+          command: |                 
+            PACKAGE_VERSION=$(node -p "require('./package.json').version")
+            if [[ $OLDER_VERSION != $PACKAGE_VERSION ]];then            
+                   docker build -f ./packages/api-server/Dockerfile  -t porch-guru-api .
+                   docker tag porch-guru-api  gcr.io/$GOOGLE_PROJECT_ID/porch-guru-api:$PACKAGE_VERSION
+                   gcloud auth print-access-token | docker login -u oauth2accesstoken --password-stdin https://gcr.io
+                   docker push gcr.io/$GOOGLE_PROJECT_ID/porch-guru-api:$PACKAGE_VERSION     
+            fi
+
+
+workflows:
+  version: 1
+  dev_stage_pre-prod:
+    jobs:
+      - build:
+          filters:
+            branches:
+              only: master
