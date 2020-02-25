@@ -8,4 +8,4 @@ RUN yarn config set loglevel warn
 COPY . /app
 
 EXPOSE 80
-CMD yarn && yarn start run:forever
+CMD yarn && yarn start
