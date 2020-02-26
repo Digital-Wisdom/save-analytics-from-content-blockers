@@ -1,6 +1,7 @@
 {
   "name": "google-tag-manager-proxy",
-  "version": "1.0.0",
+  "private": true,
+  "version": "0.9.0",
   "description": "Proxying request to google analytics and tag manager",
   "module": "src/api.js",
   "scripts": {
