@@ -11,16 +11,15 @@
   "keywords": [
     "proxy"
   ],
-  "author": "nikita.tk",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ZitRos/save-analytics-from-content-blockers.git"
+    "url": "https://github.com/Digital-Wisdom/save-analytics-from-content-blockers.git"
   },
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/ZitRos/save-analytics-from-content-blockers/issues"
+    "url": "https://github.com/Digital-Wisdom/save-analytics-from-content-blockers/issues"
   },
-  "homepage": "https://github.com/ZitRos/save-analytics-from-content-blockers#readme",
+  "homepage": "https://github.com/Digital-Wisdom/save-analytics-from-content-blockers#readme",
   "dependencies": {
     "esm": "^3.2.7",
     "express": "^4.16.4",
