@@ -1,4 +1,4 @@
-version: 1
+version: 2
 jobs:  
   build:
     docker:
@@ -53,7 +53,7 @@ jobs:
 
 
 workflows:
-  version: 1
+  version: 2
   dev_stage_pre-prod:
     jobs:
       - build:
