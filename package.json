@@ -5,7 +5,8 @@
   "module": "src/api.js",
   "scripts": {
     "test": "exit 0",
-    "start": "node -r esm src/api.js"
+    "start": "node -r esm src/api.js",
+    "semantic-release": "semantic-release"
   },
   "keywords": [
     "proxy"
@@ -24,5 +25,47 @@
     "esm": "^3.2.7",
     "express": "^4.16.4",
     "express-http-proxy": "^1.5.1"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^8.2.0",
+    "@commitlint/config-conventional": "^8.2.0",
+    "@ls-age/commitlint-circle": "^1.0.0",
+    "@semantic-release/changelog": "^3.0.6",
+    "@semantic-release/commit-analyzer": "^6.3.3",
+    "@semantic-release/git": "^7.0.18",
+    "@semantic-release/npm": "^5.3.4",
+    "@semantic-release/release-notes-generator": "^7.3.5",
+    "commitlint": "^8.2.0",
+    "husky": "^4.0.0-beta.5",
+    "semantic-release": "^15.13.31"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  },
+  "husky": {
+    "hooks": {
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
+    }
+  },
+  "release": {
+    "branch": "master",
+    "verifyConditions": [
+      "@semantic-release/changelog",
+      "@semantic-release/npm",
+      "@semantic-release/git",
+      "@semantic-release/github"
+    ],
+    "prepare": [
+      "@semantic-release/changelog",
+      "@semantic-release/npm",
+      "@semantic-release/git"
+    ],
+    "publish": [
+      "@semantic-release/npm",
+      "@semantic-release/github"
+    ],
+    "npmPublish": false
   }
 }
